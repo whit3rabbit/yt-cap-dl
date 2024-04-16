@@ -1,0 +1,8 @@
+aiohttp
+backoff
+requests
+undetected-chromedriver
+urllib3
+webvtt-py
+yt-dlp
+tqdm
