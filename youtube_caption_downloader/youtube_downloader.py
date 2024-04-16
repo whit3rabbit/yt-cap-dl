@@ -27,10 +27,11 @@ class GracefulInterruptHandler(object):
         signal.signal(signal.SIGINT, signal.SIG_IGN)
 
 class YouTubeCaptionDownloader:
-    def __init__(self, temp_dir, use_proxies=True):
+    def __init__(self, temp_dir, use_proxies=True, cookies_file=None):
         self.temp_dir = temp_dir
         self.proxies = load_valid_proxies() if use_proxies else []
         self.active_proxies = list(self.proxies)
+        self.cookies_file = cookies_file
 
     @backoff.on_exception(backoff.expo, (DownloadError, ExtractorError), max_tries=10, max_time=300, )
     def download_captions(self, video_url, channel_name, video_title, proxy=None, cookies_file=None):
@@ -46,9 +47,9 @@ class YouTubeCaptionDownloader:
         }
         if proxy:
             ydl_opts['proxy'] = proxy
-
-        if cookies_file:
-            ydl_opts["cookiefile"] = cookies_file
+            
+        if self.cookies_file:
+            ydl_opts["cookiefile"] = self.cookies_file
 
         try:
             with YoutubeDL(ydl_opts) as ydl:
